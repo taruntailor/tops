@@ -1,0 +1,118 @@
+create database asignment;
+use asignment;
+CREATE TABLE EMP (
+   Empno INT(4) PRIMARY KEY DEFAULT 0,
+   Ename VARCHAR(20),
+   Job VARCHAR(20),
+   Mgr INT(4),
+   HireDate DATE,
+   Sal DECIMAL(7,2),
+   Comm DECIMAL(7,2),
+   Deptno INT(2) REFERENCES Dept(Deptno)
+);
+select * from emp;
+INSERT INTO EMP (Empno, Ename, Job, Mgr, HireDate, Sal, Comm, Deptno) VALUES  
+(7369, 'SMITH', 'CLERK', 7902, '1980-12-17', 800.00, NULL, 20),  
+(7499, 'ALLEN', 'SALESMAN', 7698, '1981-02-20', 1600.00, 300.00, 30),  
+(7521, 'WARD', 'SALESMAN', 7698, '1981-02-22', 1250.00, 500.00, 30),  
+(7566, 'JONES', 'MANAGER', 7839, '1981-04-02', 2975.00, NULL, 20),  
+(7654, 'MARTIN', 'SALESMAN', 7698, '1981-09-28', 1250.00, 1400.00, 30),  
+(7698, 'BLAKE', 'MANAGER', 7839, '1981-05-01', 2850.00, NULL, 30),  
+(7782, 'CLARK', 'MANAGER', 7839, '1981-06-09', 2450.00, NULL, 10),  
+(7788, 'SCOTT', 'ANALYST', 7566, '1987-06-11', 3000.00, NULL, 20),  
+(7839, 'KING', 'PRESIDENT', NULL, '1981-11-17', 5000.00, NULL, 10),  
+(7844, 'TURNER', 'SALESMAN', 7698, '1981-08-09', 1500.00, 0.00, 30),  
+(7876, 'ADAMS', 'CLERK', 7788, '1987-07-13', 1100.00, NULL, 20),  
+(7900, 'JAMES', '', 7698, '1981-03-12', 950.00, NULL, 30),  
+(7902, 'FORD', 'ANALYST', 7566, '1981-03-12', 3000.00, NULL, 20),  
+(7934, 'MILLER', 'CLERK', 7782, '1982-01-23', 1300.00, NULL, 10); 
+
+CREATE TABLE Dept (
+   Deptno INT(5) primary key DEFAULT 0,
+   Dname VARCHAR(20),
+   Loc VARCHAR(20)
+);
+
+select *from dept;
+INSERT INTO Dept (Deptno, Dname, Loc) VALUES  
+(10, 'ACCOUNTING', 'NEW YORK'),  
+(20, 'RESEARCH', 'DALLAS'),  
+(30, 'SALES', 'CHICAGO'),  
+(40, 'OPERATIONS', 'BOSTON');
+
+-- ===================================questin answer===================================================
+ -- a) Select unique job from EMP table.
+select  distinct jobfrom emp;
+
+-- b) List the details of the emps in asc order of the Dptnos and desc of Jobs?
+SELECT * FROM emp ORDER BY Deptno asc;
+
+-- c) Display all the unique job groups in the descending order?
+SELECT DISTINCT job FROM EMP ORDER BY job DESC;
+
+-- d)List the emps who joined before 1981.
+SELECT * FROM EMP WHERE  year(HireDate)<1981;
+
+-- e)List the Empno, Ename, Sal, Daily sal of all emps in the asc order of Annsal.
+SELECT Empno,Ename,Sal AS Annual_Salary, Sal / 365 AS Daily_Salary FROM EMP ORDER BY Sal ASC;
+
+-- f)List the Empno, Ename, Sal, Exp of all emps working for Mgr 7698.
+SELECT job,empno,ename, sal, mgr, datediff(CURDATE(),HireDate)/365 as exp from emp where mgr = 7698;
+
+-- g) Display all the details of the emps who’s Comm. Is more than their Sal?
+SELECT * FROM EMP WHERE Comm > Sal;
+
+-- h) List the emps who are either ‘CLERK’ or ‘ANALYST’ in the Desc  order.
+SELECT *FROM emp WHERE job IN ('CLERK', 'ANALYST') ORDER BY job DESC;
+
+-- i) List the emps Who Annual sal ranging from 22000 and 45000.
+select Ename,sal*12 as annualsal from emp  WHERE (sal * 12)  between 22000 and 45000;
+
+-- j) List the Enames those are starting with ‘S’ and with five characters.
+select*from emp where Ename like 's__%';
+
+
+-- k) List the emps whose Empno not starting with digit78.
+SELECT * FROM emp WHERE empno NOT LIKE '78%';
+
+-- l) List all the Clerks of Deptno 20.
+SELECT * FROM emp WHERE deptno = 20 AND job = 'CLERK';
+
+-- m) List the Emps who are senior to their own MGRS.
+ select* from emp remaining;
+
+-- n) List the Emps of Deptno 20 who’s Jobs are same as Deptno10.
+SELECT * FROM EMP E1  WHERE E1.DEPTNO = 20  AND E1.JOB IN ( SELECT E2.JOB  FROM EMP E2  WHERE E2.DEPTNO = 10  );
+
+-- o)List the Emps who’s Sal is same as FORD or SMITH in descorder of Sal.
+select * from emp where sal  IN(select sal from emp where Ename="SMITH" OR Ename="FORD");
+
+-- p) List the emps whose jobs same as SMITH or ALLEN.
+select * from emp where job In(select job from emp where ename="Smith" or ename="Allen");
+
+-- q) Any jobs of deptno 10 those that are not found in deptno 20
+select job from  emp where deptno= 10 and job not in(select job from emp where deptno=20);
+-- r) Find the highest sal of EMP table. 
+select max(sal) as Highestsal from emp;
+
+-- s) Find details of highest paid employee. 
+select*from emp where sal=(select max(sal) as Highestsal from emp);
+
+-- t)  Find the total sal given to the MGR.
+select job,sum(sal) as totalsum from emp group by job having job="Manager";
+
+-- u) List the emps whose names contains ‘A’. 
+select*from emp where ename like'A%';
+
+-- v)Find all the emps who earn the minimum Salary for each job wise in ascending  order. 
+SELECT e1.ename, e1.sal ,e1.job FROM emp e1  JOIN (  SELECT job, MIN(sal) AS minsalary  FROM emp  GROUP BY job ) 
+e2 ON e1.job = e2.job AND e1.sal = e2.minsalary order by sal;
+
+-- w) List the emps whose sal greater than Blake’s sal.
+select *from emp where sal>(select sal from emp where ename="Blake");
+
+
+
+
+select * from emp;
+
